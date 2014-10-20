@@ -1,5 +1,10 @@
-import json, urllib, httplib
+import json, urllib2, logging
 
+class MalformedJSON(Exception):
+    pass
+
+class MisformattedName(Exception):
+    pass
 
 class Server:
     """
@@ -8,7 +13,7 @@ class Server:
 
     def __init__(self, addr, fingerprint):
         """
-        Initializes a connection to a DNSChain server.
+        Store configuration for requests to a DNSChain server.
 
         @param addr: The address of the trusted DNSChain server (IP or hostname)
         TODO: May need port here?
@@ -17,7 +22,7 @@ class Server:
 
         self.addr = addr
         self.fingerprint = fingerprint
-        self.connection = httplib.HTTPConnection(addr)
+        self.headers = {'Host': 'namecoin.dns'}#Per http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
 
     def lookup(self, name):
         """
@@ -27,27 +32,33 @@ class Server:
 
         @param name: The name to lookup, e.g. 'id/dionyziz'
         """
-        #uname = name.encode("utf-8")#Who knows what bytes will be submitted?! Look up dnschain spec.
-        url_safe_name = urllib.quote(name, safe="") #Meant to be a url path _component_.
-        path = "/id/%s" % (url_safe_name,)
-        self.connection.request("GET", path)
-        namecoin_response = self.connection.getresponse()
-        namecoin_string = namecoin_response.read()
+        if not (name.startswith('d/') or name.startswith('id/')):
+            raise MisformattedName("'name' must start with 'd/' or 'id/', but name passed in is: %s." % (name,))
+        partition_tuple = name.partition('/')
+        urlunsafe_name = partition_tuple[2]
+        urlsafe_name = urllib2.quote(urlunsafe_name, safe="") #Meant to be a url path _component_.
+        url_path = '%s/%s' % (partition_tuple[0], urlsafe_name)
+        full_url = "http://%s/%s" % (self.addr, url_path)
+        request = urllib2.Request(full_url, None, self.headers)
+        try:
+            response = urllib2.urlopen(request)
+        except urllib2.HTTPError, e:
+            if e.reason == "Not Found":
+                logging.log(1, "The name: %s was not found in the database, returning None.", urlsafe_name)
+                raise e
+
+        namecoin_string = response.read()
         try:
             data = json.loads(namecoin_string)
         except ValueError, e:
-            if namecoin_string.startswith("Not Found: "):
-                print "The name: %s was not found in the database, returning None." % (url_safe_name)
-                return None
-            else:
-                print "Instead of JSON we got this:\n%s\n" % (e,)
-                import sys
-                sys.exit(99) #Fail hard.
+                raise MalformedJSON("%s\nData Follows:\n'''\n%s\n'''" % (e, namecoin_string))
         return data
 
 
 if __name__ == '__main__':
     #DNSChainServer = Server("192.184.93.146", "NOTYETIMPLEMENTED")#Seems to coerce to https. 443?
     DNSChainServer = Server("dns.dnschain.net", "NOTYETIMPLEMENTED")
-    print DNSChainServer.lookup("greg")
-    print DNSChainServer.lookup("OAUF:EUIERPEWEOPHOUH:QBP&(@PG$UFR:G//DFUhSUG")
+    print DNSChainServer.lookup("id/greg")
+    print DNSChainServer.lookup("d/greg")
+    #print DNSChainServer.lookup("greg")
+    #print DNSChainServer.lookup("id/OAUF:EUIERPEWEOPHOUH:QBP&(@PG$UFR:G//DFUhSUG")
