@@ -32,11 +32,9 @@ class Server:
 
         @param name: The name to lookup, e.g. 'id/dionyziz'
         """
-        if not (name.startswith('d/') or name.startswith('id/')):
-            raise MisformattedName("'name' must start with 'd/' or 'id/', but name passed in is: %s." % (name,))
         partition_tuple = name.partition('/')
         urlunsafe_name = partition_tuple[2]
-        urlsafe_name = urllib2.quote(urlunsafe_name, safe="") #Meant to be a url path _component_.
+        urlsafe_name = urllib2.quote(urlunsafe_name, safe="") #a url path _component_.
         url_path = '%s/%s' % (partition_tuple[0], urlsafe_name)
         full_url = "http://%s/%s" % (self.addr, url_path)
         request = urllib2.Request(full_url, None, self.headers)
