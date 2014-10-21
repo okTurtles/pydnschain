@@ -3,15 +3,12 @@ import json, urllib2, logging
 class MalformedJSON(Exception):
     pass
 
-class MisformattedName(Exception):
-    pass
-
 class Server:
     """
     A connection to a DNSChain server.
     """
 
-    def __init__(self, addr, fingerprint):
+    def __init__(self, addr, fingerprint, http_host_header='namecoin.dns'):
         """
         Store configuration for requests to a DNSChain server.
 
@@ -22,7 +19,7 @@ class Server:
 
         self.addr = addr
         self.fingerprint = fingerprint
-        self.headers = {'Host': 'namecoin.dns'}#Per http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+        self.headers = {'Host': http_host_header}#Per http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
 
     def lookup(self, name):
         """
@@ -54,9 +51,9 @@ class Server:
 
 
 if __name__ == '__main__':
-    #DNSChainServer = Server("192.184.93.146", "NOTYETIMPLEMENTED")#Seems to coerce to https. 443?
-    DNSChainServer = Server("dns.dnschain.net", "NOTYETIMPLEMENTED")
+    DNSChainServer = Server("192.184.93.146", "NOTYETIMPLEMENTED")#Seems to coerce to https. 443?
+    #DNSChainServer = Server("dns.dnschain.net", "NOTYETIMPLEMENTED")
     print DNSChainServer.lookup("id/greg")
     print DNSChainServer.lookup("d/greg")
     #print DNSChainServer.lookup("greg")
-    #print DNSChainServer.lookup("id/OAUF:EUIERPEWEOPHOUH:QBP&(@PG$UFR:G//DFUhSUG")
+    print DNSChainServer.lookup("id/OAUF:EUIERPEWEOPHOUH:QBP&(@PG$UFR:G//DFUhSUG")
