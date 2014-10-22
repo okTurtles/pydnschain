@@ -21,7 +21,7 @@ class Server:
         self.fingerprint = fingerprint
         self.headers = {'Host': http_host_header}#Per http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
 
-    def lookup(self, name):
+    def lookup(self, name, host_override=None):
         """
         Looks up a name from the DNSChain server. Throws exception if the
         data is not valid JSON or if the namecoin entry does not exist in the
@@ -29,6 +29,8 @@ class Server:
 
         @param name: The name to lookup, e.g. 'id/dionyziz'
         """
+        if host_override is not None:
+            self.headers['Host'] = host_override
         partition_tuple = name.partition('/')
         urlunsafe_name = partition_tuple[2]
         urlsafe_name = urllib2.quote(urlunsafe_name, safe="") #a url path _component_.
