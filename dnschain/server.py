@@ -55,7 +55,7 @@ class Server(LoggingMixin):
             if e.code == 404:
                 e = DataNotFound(e, name, self.headers['Host'])
             if e.code < 200 or e.code > 299:
-                self._log.debug("Raised: '%s', for reason '%s'." % (e, e.msg), exc_info=True)
+                self._log.debug("%s" % (e.msg,), exc_info=True)
                 raise e
 
         namecoin_string = response.read()
