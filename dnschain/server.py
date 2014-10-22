@@ -27,21 +27,19 @@ class Server:
         data is not valid JSON or if the namecoin entry does not exist in the
         blockchain.
 
-        @param name: The name to lookup, e.g. 'id/dionyziz'
+        @param name: The name to lookup, e.g. 'id/dionyziz', note this $NAMESPACE/$NAME
+        format is not guaranteed.  Additionally the caller must perform appropriate url
+        encoding _before_ the name is passed to urllib2.urlopen
         """
         if host_override is not None:
             self.headers['Host'] = host_override
-        partition_tuple = name.partition('/')
-        urlunsafe_name = partition_tuple[2]
-        urlsafe_name = urllib2.quote(urlunsafe_name, safe="") #a url path _component_.
-        url_path = '%s/%s' % (partition_tuple[0], urlsafe_name)
-        full_url = "http://%s/%s" % (self.addr, url_path)
+        full_url = "http://%s/%s" % (self.addr, name)
         request = urllib2.Request(full_url, None, self.headers)
         try:
             response = urllib2.urlopen(request)
         except urllib2.HTTPError, e:
             if e.reason == "Not Found":
-                logging.log(1, "The name: %s was not found in the database, returning None.", urlsafe_name)
+                logging.log(1, "The name: %s was not found in the database, raised %s." % (name, e))
                 raise e
 
         namecoin_string = response.read()
