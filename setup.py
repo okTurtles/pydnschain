@@ -5,8 +5,7 @@ setup(
     version='0.1.0',
     url='https://github.com/okturtles/pydnschain',
     license='MPL',
-    description=
-    "A Python DNSChain library"
+    description="A Python DNSChain library",
     author='Greg Slepak',
     author_email='hi@okturtles.com',
     packages=find_packages(),

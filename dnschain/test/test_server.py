@@ -1,4 +1,5 @@
-import unittest, mock
+import mock
+import unittest
 
 import dnschain
 from dnschain.server import Server
@@ -9,7 +10,7 @@ class TestServerInstantiation(unittest.TestCase):
     @mock.patch('dnschain.server.urllib.FancyURLopener')
     def setUp(self, mock_opener):
         self.mock_opener = mock_opener
-        self.assertTrue(dnschain.server.urllib.FancyURLopener is self.mock_opener)
+        self.assertIs(dnschain.server.urllib.FancyURLopener, self.mock_opener)
         self.dnschain_server = Server("0.0.0.0", "FAKEFINGERPRINT")
 
     def test_invalid_address(self):
@@ -31,7 +32,7 @@ class TestServerLookup(unittest.TestCase):
     @mock.patch('dnschain.server.urllib.FancyURLopener')
     def setUp(self, mock_opener, mock_json_loads):
         self.mock_opener = mock_opener
-        self.assertTrue(dnschain.server.urllib.FancyURLopener is self.mock_opener)
+        self.assertIs(dnschain.server.urllib.FancyURLopener, self.mock_opener)
         self.dnschain_server = Server("0.0.0.0", "FAKEFINGERPRINT")
         self.dnschain_server.lookup("greg")
 
@@ -45,7 +46,7 @@ class TestServerLookup(unittest.TestCase):
         pass
 
 
-#class MaybeSubClassingIsTheCleanestWayForward 
+# class MaybeSubClassingIsTheCleanestWayForward
 
 if __name__ == '__main__':
     unittest.main()

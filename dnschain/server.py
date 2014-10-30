@@ -1,4 +1,5 @@
-import json, urllib2
+import json
+import urllib2
 
 from log import LoggingMixin
 
@@ -33,7 +34,8 @@ class Server(LoggingMixin):
         self._logger_helper(__name__)
         self.addr = addr
         self.fingerprint = fingerprint
-        self.headers = {'Host': http_host_header}#Per http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+        # Per http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+        self.headers = {'Host': http_host_header}
 
     def lookup(self, name, host_override=None):
         """
@@ -67,9 +69,10 @@ class Server(LoggingMixin):
 
 
 if __name__ == '__main__':
-    DNSChainServer = Server("192.184.93.146", "NOTYETIMPLEMENTED")#Seems to coerce to https. 443?
-    #DNSChainServer = Server("dns.dnschain.net", "NOTYETIMPLEMENTED")
+    DNSChainServer = Server("192.184.93.146", "NOTYETIMPLEMENTED")
+    # Seems to coerce to https. 443?
+    # DNSChainServer = Server("dns.dnschain.net", "NOTYETIMPLEMENTED")
     print DNSChainServer.lookup("id/greg")
     print DNSChainServer.lookup("d/greg")
-    #print DNSChainServer.lookup("greg")
+    # print DNSChainServer.lookup("greg")
     DNSChainServer.lookup("id/OAUF:EUIERPEWEOPHOUH:QBP&(@PG$UFR:G//DFUhSUG")
