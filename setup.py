@@ -1,8 +1,10 @@
 from setuptools import setup, find_packages
 
+import dnschain
+
 setup(
     name="dnschain",
-    version='0.1.0',
+    version=dnschain.__version__,
     url='https://github.com/okturtles/pydnschain',
     license='MPL',
     description="A Python DNSChain library",
@@ -10,6 +12,7 @@ setup(
     author_email='hi@okturtles.com',
     packages=find_packages(),
     classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
         'Operating System :: Unix',
         'Operating System :: Microsoft :: Windows',
         'Environment :: MacOS X',
