@@ -12,6 +12,7 @@ setup(
     author_email='hi@okturtles.com',
     packages=find_packages(),
     classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
         'Operating System :: Unix',
         'Operating System :: Microsoft :: Windows',
         'Environment :: MacOS X',
